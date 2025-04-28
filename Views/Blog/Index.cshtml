@@ -1,0 +1,31 @@
+﻿@model List<BlogProject.Models.BlogPost>
+
+@{
+    ViewData["Title"] = "Blog Yazıları";
+}
+
+<h1>Blog Yazıları</h1>
+
+<a class="btn btn-primary mb-3" href="/Blog/Create">Yeni Yazı Ekle</a>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Başlık</th>
+            <th>İçerik</th>
+            <th>Oluşturulma Tarihi</th>
+            <th>Beğeni</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var post in Model)
+        {
+            <tr>
+                <td>@post.Title</td>
+                <td>@(post.Content.Length > 100 ? post.Content.Substring(0, 100) + "..." : post.Content)</td>
+                <td>@post.CreatedAt.ToShortDateString()</td>
+                <td>@post.Likes</td>
+            </tr>
+        }
+    </tbody>
+</table>

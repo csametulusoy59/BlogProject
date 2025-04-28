@@ -1,0 +1,42 @@
+﻿@model BlogProject.Models.BlogPost
+
+@{
+    ViewData["Title"] = "Yazı Detayı";
+}
+
+<h1>@Model.Title</h1>
+
+<p>@Model.Content</p>
+
+<hr />
+
+<h3>Yorumlar</h3>
+
+@if (Model.Comments != null && Model.Comments.Any())
+{
+    <ul class="list-group">
+        @foreach (var comment in Model.Comments)
+        {
+            <li class="list-group-item">
+                <small>@comment.CreatedAt.ToShortDateString()</small><br />
+                @comment.Content
+            </li>
+        }
+    </ul>
+}
+else
+{
+    <p>Henüz yorum yok.</p>
+}
+
+<hr />
+
+<h4>Yorum Yap</h4>
+
+<form asp-action="AddComment" method="post">
+    <input type="hidden" name="blogPostId" value="@Model.Id" />
+    <div class="form-group mb-3">
+        <textarea name="content" class="form-control" rows="3" placeholder="Yorumunuzu yazın..." required></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Gönder</button>
+</form>

@@ -1,0 +1,37 @@
+﻿@model List<BlogProject.Models.Comment>
+
+@{
+    ViewData["Title"] = "Yorumları Yönet";
+}
+
+<div class="container mt-4">
+    <h2 class="text-center mb-4">📝 Yorum Yönetimi</h2>
+
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>Yorum İçeriği</th>
+                <th>Yazıldığı Blog Başlığı</th>
+                <th>Yorum Tarihi</th>
+                <th>İşlem</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var comment in Model)
+            {
+                <tr>
+                    <td>@comment.Id</td>
+                    <td>@comment.Content</td>
+                    <td>@comment.BlogPost?.Title</td>
+                    <td>@comment.CreatedAt.ToString("dd.MM.yyyy HH:mm")</td>
+                    <td>
+                        <a href="/Comment/Delete/@comment.Id" class="btn btn-danger btn-sm" onclick="return confirm('Bu yorumu silmek istediğinize emin misiniz?')">Sil</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <a href="/AdminPanel" class="btn btn-secondary mt-3">🔙 Admin Paneline Dön</a>
+</div>

@@ -1,0 +1,35 @@
+﻿@model List<Microsoft.AspNetCore.Identity.IdentityUser>
+
+@{
+    ViewData["Title"] = "Kullanıcıları Yönet";
+}
+
+<div class="container mt-4">
+    <h2 class="text-center mb-4">👤 Kullanıcı Yönetimi</h2>
+
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>Email</th>
+                <th>Email Onaylı mı?</th>
+                <th>İşlem</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in Model)
+            {
+                <tr>
+                    <td>@user.Id</td>
+                    <td>@user.Email</td>
+                    <td>@(user.EmailConfirmed ? "Evet" : "Hayır")</td>
+                    <td>
+                        <a href="/User/Delete/@user.Id" class="btn btn-danger btn-sm" onclick="return confirm('Bu kullanıcıyı silmek istediğinize emin misiniz?')">Sil</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <a href="/AdminPanel" class="btn btn-secondary mt-3">🔙 Admin Paneline Dön</a>
+</div>
