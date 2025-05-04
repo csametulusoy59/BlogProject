@@ -1,28 +1,75 @@
-﻿@model BlogProject.Models.User
+﻿@model BlogProject.Models.ViewModels.LoginViewModel
 
 @{
     ViewData["Title"] = "Giriş Yap";
+    // Layout olarak _Layout.cshtml kullanılacak, bu sayede yıldız arkaplanı gelir
+    Layout = "_Layout";
 }
 
-<h2>@ViewData["Title"]</h2>
+@* Giriş ekranı için özel CSS dosyasını linkleyin *@
+<link rel="stylesheet" href="~/css/login-ring.css" asp-append-version="true" />
 
-<form asp-action="Login" method="post">
-    <div class="form-group">
-        <label>Kullanıcı Adı</label>
-        <input asp-for="Username" class="form-control" />
-        <span asp-validation-for="Username" class="text-danger"></span>
+@* Halka (ring) divi başlar *@
+<div class="ring">
+    @* Halka i elementleri (renkleri CSS'te --clr değişkeni ile ayarlanır) *@
+    <i style="--clr:#00ff0a;"></i>
+    <i style="--clr:#ff0057;"></i>
+    <i style="--clr:#fffd44;"></i>
+
+    @* Giriş formu container'ı *@
+    <div class="login">
+        <h2>Giriş Yap</h2>
+
+        @* Doğrulama özetini buraya ekleyin *@
+        <div asp-validation-summary="ModelOnly" class="validation-summary-errors"></div>
+
+        @* Giriş Formu *@
+        <form asp-controller="Account" asp-action="Login" method="post">
+            @Html.AntiForgeryToken() @* Güvenlik için Anti-Forgery Token *@
+
+            @* Kullanıcı Adı Input Alanı *@
+            <div class="inputBx">
+                <input asp-for="Username" placeholder="Kullanıcı Adı" required>
+                @* Kullanıcı adı için doğrulama mesajı *@
+                <span asp-validation-for="Username" class="text-danger"></span>
+            </div>
+
+            @* Şifre Input Alanı *@
+            <div class="inputBx">
+                <input asp-for="Password" type="password" placeholder="Şifre" required>
+                @* Şifre için doğrulama mesajı *@
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+
+            @* Beni Hatırla Checkbox (İsteğe bağlı) *@
+            @* Eğer RememberMe özelliğiniz varsa ekleyebilirsiniz *@
+            @*
+            <div class="inputBx" style="align-items: center; flex-direction: row; justify-content: flex-start; gap: 5px;">
+                 <input type="checkbox" asp-for="RememberMe" style="width: auto; margin-right: 5px;">
+                 <label asp-for="RememberMe" style="color: #fff; font-size: 1em; border: none;">Beni Hatırla</label>
+            </div>
+            *@
+
+            @* Giriş Yap Submit Butonu *@
+            <div class="inputBx">
+                <input type="submit" value="Giriş Yap">
+            </div>
+
+            @* Linkler (Şifremi Unuttum, Kayıt Ol) *@
+            <div class="links">
+                @* Şifremi Unuttum linki (varsa) *@
+                @* <a href="#">Şifremi Unuttum</a> *@
+                @* Kayıt Ol linki (varsa) *@
+                @* Varsayılan olarak Register action'ına yönlendirelim *@
+                <a asp-controller="Account" asp-action="Register">Kayıt Ol</a>
+            </div>
+        </form>
     </div>
-
-    <div class="form-group">
-        <label>Şifre</label>
-        <input asp-for="Password" type="password" class="form-control" />
-        <span asp-validation-for="Password" class="text-danger"></span>
-    </div>
-
-    <button type="submit" class="btn btn-primary mt-2">Giriş Yap</button>
-</form>
+</div>
+@* Halka (ring) divi sonu *@
 
 @section Scripts {
+    @* Model doğrulama scriptleri *@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }

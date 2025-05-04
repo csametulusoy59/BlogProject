@@ -23,8 +23,8 @@
                 <tr>
                     <td>@comment.Id</td>
                     <td>@comment.Content</td>
-                    <td>@comment.BlogPost?.Title</td>
-                    <td>@comment.CreatedAt.ToString("dd.MM.yyyy HH:mm")</td>
+                    <td>@comment.Blog?.Title</td>
+                    <td>@comment.Timestamp.ToString("dd.MM.yyyy HH:mm")</td>
                     <td>
                         <a href="/Comment/Delete/@comment.Id" class="btn btn-danger btn-sm" onclick="return confirm('Bu yorumu silmek istediğinize emin misiniz?')">Sil</a>
                     </td>

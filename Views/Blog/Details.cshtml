@@ -1,42 +1,324 @@
-﻿@model BlogProject.Models.BlogPost
+﻿@model BlogProject.Models.BlogPost 
+
+@using System.Security.Claims @* ClaimTypes kullanımı için gerekli *@
+@using Microsoft.AspNetCore.Identity @* Kullanıcı kimlik durumu için gerekli *@
 
 @{
-    ViewData["Title"] = "Yazı Detayı";
+    ViewData["Title"] = Model.Title;
+
+    // Mevcut kullanıcının ID'sini al ve integer'a dönüştürmeye çalış
+    bool isUserAuthenticated = User.Identity.IsAuthenticated;
+    int currentUserIdInt = 0;
+    bool isCurrentUserIdIntParsed = false;
+
+    if (isUserAuthenticated)
+    {
+        // ClaimTypes.NameIdentifier genellikle kullanıcının unique ID'sini (genellikle integer) tutar
+        var currentUserIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        // String ID'yi integer'a dönüştürmeye çalış
+        isCurrentUserIdIntParsed = int.TryParse(currentUserIdString, out currentUserIdInt);
+    }
+
+    // Kullanıcının bu yazıyı beğenip beğenmediğini kontrol et
+    // Kullanıcı kimliği doğrulanmışsa VE ID'si integer'a dönüştürülebilmişse VE Model.Likes null değilse
+    // VE Likes koleksiyonunda UserId'si mevcut kullanıcının integer ID'sine eşit olan bir öğe varsa
+    // BlogPostLike modelinizdeki UserId'nin int olduğundan emin olun.
+    var userHasLiked = isUserAuthenticated && isCurrentUserIdIntParsed && Model.Likes != null && Model.Likes.Any(l => l.UserId == currentUserIdInt);
 }
 
-<h1>@Model.Title</h1>
+@* AJAX istekleri için Anti-Forgery Token oluştur *@
+@Html.AntiForgeryToken()
 
-<p>@Model.Content</p>
+@* Magic Card CSS'i detay sayfasında gerekmez, Index sayfası içindir. *@
+@* Eğer önceki bir denemeden kaldıysa bu linki kaldırın. *@
+@* <link rel="stylesheet" href="~/css/magic-cards.css" asp-append-version="true" /> *@
 
-<hr />
+@* Blog listesi CSS'i detay sayfasında gerekmez. *@
+@* Eğer önceki bir denemeden kaldıysa bu linki kaldırın. *@
+@* <link rel="stylesheet" href="~/css/blog-list.css" asp-append-version="true" /> *@
 
-<h3>Yorumlar</h3>
+@* Yorumlar için özel CSS dosyasını linkleyin *@
+<link rel="stylesheet" href="~/css/comments.css" asp-append-version="true" />
 
-@if (Model.Comments != null && Model.Comments.Any())
-{
-    <ul class="list-group">
-        @foreach (var comment in Model.Comments)
-        {
-            <li class="list-group-item">
-                <small>@comment.CreatedAt.ToShortDateString()</small><br />
-                @comment.Content
-            </li>
-        }
-    </ul>
+
+<div class="container mt-5">
+    <article>
+        @* Blog Başlığı *@
+        <h2>@Model.Title</h2>
+        @* Yazar ve Yayın Tarihi *@
+        <p class="text-muted">Yazan: @Model.Author | Tarih: @Model.PublishDate.ToShortDateString()</p>
+        <hr />
+        @* Blog İçeriği *@
+        <div class="blog-content"> @* İçerik için bir div ekleyebiliriz *@
+            @Html.Raw(Model.Content) @* Blog içeriğini HTML olarak render edin *@
+        </div>
+
+        @* Beğeniler Bölümü *@
+        <div class="likes-section mt-4"> @* Beğeniler için bir div ekleyebiliriz *@
+            <h4>Beğeniler: <span id="likeCount">@(Model.Likes?.Count ?? 0)</span></h4>
+            @if (User.Identity.IsAuthenticated)
+            {
+                @* Beğenme butonu - data-liked özniteliği ile başlangıç durumunu sakla *@
+                @* Butonun ID'si ve data öznitelikleri JavaScript için korunur *@
+                <button id="likeButton" class="btn @(userHasLiked ? "btn-danger" : "btn-outline-primary")"
+                        data-blog-id="@Model.Id"
+                        data-liked="@userHasLiked.ToString().ToLower()">
+                    @* İkonun başlangıç durumu ve rengi userHasLiked değişkenine göre ayarlanır *@
+                    @(userHasLiked ? "Beğendin" : "Beğen") <i class="@(userHasLiked ? "fas" : "far") fa-heart"></i> @* Font Awesome ikonu *@
+                </button>
+            }
+            else
+            {
+                 <p class="text-muted">Beğenmek için giriş yapın.</p>
+            }
+        </div>
+
+        <hr />
+
+        @* Yorumlar Bölümü - comments.css tarafından stillendirilecek ana konteyner *@
+        <div class="comments-container"> @* comments-section yerine comments-container kullandık *@
+             @* comments-container içindeki h1 başlığı CSS'te tanımlı, ihtiyacınız varsa kullanın *@
+             @* <h1>Yorumlar</h1> *@
+
+            @* Yorum Ekleme Formu (Sadece giriş yapmış kullanıcılar için) *@
+            @if (User.Identity.IsAuthenticated)
+            {
+                <div class="comment-form mb-4"> @* Mevcut form yapısını koruduk *@
+                    <h5>Yorum Ekle</h5>
+                    @* Yorum formu için de Anti-Forgery Token gereklidir *@
+                    <form id="addCommentForm" data-blog-id="@Model.Id">
+                         @* Form içine Anti-Forgery Token ekle *@
+                         @Html.AntiForgeryToken() @* Bu token form için ayrı olmalı *@
+                        <div class="mb-3">
+                            <textarea id="commentContent" class="form-control" rows="3" placeholder="Yorumunuzu buraya yazın..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Gönder</button>
+                    </form>
+                </div>
+            }
+            else
+            {
+                <p class="text-muted">Yorum yapmak için giriş yapın.</p>
+            }
+
+
+            @* Yorum Listesi - comments.css tarafından stillendirilecek ul etiketi *@
+            @* commentsList ID'sini JavaScript için koruduk *@
+            <ul class="comments-list" id="commentsList"> @* div yerine ul kullandık, comments-list sınıfını ekledik *@
+                @if (Model.Comments != null)
+                {
+                    @* Ana yorumları listele (ParentCommentId null olanlar) *@
+                    @foreach (var comment in Model.Comments.Where(c => c.ParentCommentId == null).OrderBy(c => c.Timestamp))
+                    {
+                        @* Her yorum için bir li etiketi ekledik *@
+                        <li>
+                            @Html.Partial("_CommentPartial", comment) @* Her yorum için Partial View kullanacağız *@
+                        </li>
+                    }
+                }
+            </ul> @* /div yerine /ul *@
+        </div> @* /comments-container *@
+    </article>
+</div>
+
+@section Scripts {
+    @* jQuery kütüphanesini ekleyin (Eğer Layout'ta yoksa) *@
+    @* AJAX için jQuery kullanabilirsiniz *@
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> @* Veya Layout'taki versiyonu kullanın *@
+
+    <script>
+        $(document).ready(function () {
+
+             // Sayfa genelindeki Anti-Forgery Token değerini al (form dışındaki AJAX için)
+            var antiForgeryToken = $('input[name="__RequestVerificationToken"]').val();
+
+            // Beğenme Butonu Click Handler
+            $('#likeButton').on('click', function () {
+                // Giriş yapılmamışsa JavaScript tarafında da kontrol edilebilir,
+                // ancak sunucu tarafındaki [Authorize] özniteliği asıl kontrolü yapar.
+                // if (!@User.Identity.IsAuthenticated.ToString().ToLower()) {
+                //     alert('Beğenmek için lütfen giriş yapın.');
+                //     return;
+                // }
+
+                var button = $(this);
+                var blogId = button.data('blog-id');
+                // data-liked özniteliğini boolean olarak al
+                var isLiked = button.data('liked'); // Bu zaten boolean olarak geliyor
+
+                // ToggleLike action'ını çağır
+                var url = '/Blog/ToggleLike';
+
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    data: { blogId: blogId },
+                     headers: { // Anti-Forgery Token'ı header'a ekle
+                        'RequestVerificationToken': antiForgeryToken // Sayfa genelindeki token'ı kullan
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            // Butonun görünümünü ve data-liked özelliğini güncelle
+                             // response.liked sunucudan gelen yeni beğeni durumunu belirtir
+                            if (response.liked) { // Sunucuya göre beğenilmişse
+                                button.removeClass('btn-outline-primary').addClass('btn-danger');
+                                button.html('Beğendin <i class="fas fa-heart"></i>'); // İkonu dolu yap
+                            } else { // Sunucuya göre beğeni geri alındıysa
+                                button.removeClass('btn-danger').addClass('btn-outline-primary');
+                                button.html('Beğen <i class="far fa-heart"></i>'); // İkonu boş yap
+                            }
+                            button.data('liked', response.liked); // data-liked özniteliğini sunucudan gelen değere göre güncelle
+
+
+                            // Beğeni sayısını güncelle
+                            $('#likeCount').text(response.newLikeCount); // newLikeCount sunucudan gelmeli
+                        } else {
+                            // Beğeni işlemi sunucu tarafında mantıksal olarak başarısız olursa
+                            if (response.message) {
+                                alert('Beğenme/Beğenmekten Vazgeçme işlemi başarısız oldu: ' + response.message);
+                            } else {
+                                alert('Beğenme/Beğenmekten Vazgeçme işlemi başarısız oldu.');
+                            }
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        // AJAX isteği sırasında hata olursa (örn: 401 Unauthorized, 400 Bad Request vb.)
+                        console.error("Beğeni AJAX hatası:", error);
+                        // Hata durumunda spesifik mesajlar gösterebilirsiniz (örn: xhr.status'a göre)
+                        if (xhr.status === 401) { // Yetkisiz (Unauthorized) hatası
+                             alert('Beğenmek için lütfen giriş yapın.');
+                             // İsteğe bağlı olarak kullanıcıyı giriş sayfasına yönlendirebilirsiniz
+                             // window.location.href = '/Account/Login'; // Giriş sayfasına yönlendirme
+                        } else {
+                           alert('Bir hata oluştu, lütfen tekrar deneyin.');
+                        }
+                    }
+                });
+            });
+
+            // Yorum Ekleme Formu Submit Handler
+            $('#addCommentForm').on('submit', function (e) {
+                e.preventDefault(); // Formun normal submit olmasını engelle
+
+                 if (!@User.Identity.IsAuthenticated.ToString().ToLower()) {
+                    alert('Yorum yapmak için lütfen giriş yapın.');
+                    return;
+                }
+
+                var form = $(this);
+                var blogId = form.data('blog-id');
+                var commentContent = $('#commentContent').val();
+                 // Form içindeki Anti-Forgery Token'ı al
+                var formAntiForgeryToken = form.find('input[name="__RequestVerificationToken"]').val();
+
+
+                if (commentContent.trim() === '') {
+                    alert('Yorum içeriği boş olamaz.');
+                    return;
+                }
+
+                $.ajax({
+                    url: '/Comment/AddComment', // Comment Controller'da olacak Action
+                    type: 'POST',
+                    data: { blogId: blogId, content: commentContent },
+                     headers: { // Anti-Forgery Token'ı header'a ekle
+                        'RequestVerificationToken': formAntiForgeryToken // Formun kendi token'ını kullan
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            // Yeni yorumu yorum listesine ekle
+                            // response.commentHtml, sunucudan dönen yeni yorumun HTML'i olmalı
+                            $('#commentsList').prepend(response.commentHtml); // En üste ekleyebiliriz
+                            $('#commentContent').val(''); // Form alanını temizle
+                             // Yorum sayısını güncelle (isteğe bağlı)
+                             $('.comments-section h4').text('Yorumlar (' + response.commentCount + ')');
+                        } else {
+                            alert('Yorum ekleme başarısız oldu: ' + response.message);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Yorum AJAX hatası:", error);
+                         if (xhr.status === 401) { // Yetkisiz (Unauthorized) hatası
+                             alert('Yorum yapmak için lütfen giriş yapın.');
+                             // window.location.href = '/Account/Login'; // Giriş sayfasına yönlendirme
+                        } else {
+                           alert('Bir hata oluştu, lütfen tekrar deneyin.');
+                        }
+                    }
+                });
+            });
+
+            // Yorum Cevaplama Formu Submit Handler (AJAX ile)
+            // Bu kısım, _CommentPartial içinde oluşturulacak cevap formları için geçerli olacak.
+            // O yüzden bu handler'ı document seviyesinde tanımlamak daha iyi:
+             $(document).on('submit', '.reply-form', function (e) {
+                e.preventDefault();
+
+                 if (!@User.Identity.IsAuthenticated.ToString().ToLower()) {
+                    alert('Cevap yazmak için lütfen giriş yapın.');
+                    return;
+                }
+
+                var form = $(this);
+                var blogId = form.data('blog-id');
+                var parentCommentId = form.data('parent-comment-id');
+                var replyContent = form.find('textarea').val();
+                 // Form içindeki Anti-Forgery Token'ı al
+                 var formAntiForgeryToken = form.find('input[name="__RequestVerificationToken"]').val();
+
+
+                if (replyContent.trim() === '') {
+                    alert('Cevap içeriği boş olamaz.');
+                    return;
+                }
+
+                $.ajax({
+                    url: '/Comment/AddComment', // Aynı AddComment action'ını kullanabiliriz
+                    type: 'POST',
+                    data: { blogId: blogId, parentCommentId: parentCommentId, content: replyContent },
+                     headers: { // Anti-Forgery Token'ı header'a ekle
+                        'RequestVerificationToken': formAntiForgeryToken // Formun kendi token'ını kullan
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            // Yeni cevabı ilgili yorumun altına ekle
+                            // response.commentHtml, sunucudan dönen yeni yorumun HTML'i olmalı
+                            // Yeni cevabı eklerken, comments.css'in beklediği li yapısını da eklememiz gerekiyor.
+                             // response.commentHtml zaten _CommentPartial tarafından oluşturulduğu için,
+                             // Partial View'ın kendisinin li etiketini sarması veya JavaScript'in eklerken sarması gerekir.
+                             // Partial View'ı li ile sarmak daha kolay. _CommentPartial'ı güncelleyeceğiz.
+                            form.closest('.comment').find('.replies').append(response.commentHtml); // Cevapları tutan ul'ye ekle
+                            form.find('textarea').val(''); // Form alanını temizle
+                            form.hide(); // Cevap formunu gizle
+                             // Yorum sayısını güncelle (isteğe bağlı)
+                             // Cevaplar da toplam yorum sayısına dahilse bu satırı kullanabilirsiniz
+                             // $('.comments-section h4').text('Yorumlar (' + response.commentCount + ')');
+                        } else {
+                            alert('Cevap ekleme başarısız oldu: ' + response.message);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Cevap AJAX hatası:", error);
+                         if (xhr.status === 401) { // Yetkisiz (Unauthorized) hatası
+                             alert('Cevap yazmak için lütfen giriş yapın.');
+                             // window.location.href = '/Account/Login'; // Giriş sayfasına yönlendirme
+                        } else {
+                           alert('Bir hata oluştu, lütfen tekrar deneyin.');
+                        }
+                    }
+                });
+            });
+
+             // Cevapla Butonu Click Handler (Cevap formunu göstermek için)
+            $(document).on('click', '.reply-button', function () {
+                var commentElement = $(this).closest('.comment');
+                 // Diğer tüm cevap formlarını gizle
+                 $('.reply-form').not(commentElement.find('.reply-form')).hide();
+                commentElement.find('.reply-form').toggle(); // Tıklanan yorumun cevap formunu göster/gizle
+            });
+
+        });
+    </script>
+     @* _ValidationScriptsPartial eğer yorum formunda client-side validation kullanıyorsanız gerekli olabilir *@
+     @* @{await Html.RenderPartialAsync("_ValidationScriptsPartial");} *@
 }
-else
-{
-    <p>Henüz yorum yok.</p>
-}
-
-<hr />
-
-<h4>Yorum Yap</h4>
-
-<form asp-action="AddComment" method="post">
-    <input type="hidden" name="blogPostId" value="@Model.Id" />
-    <div class="form-group mb-3">
-        <textarea name="content" class="form-control" rows="3" placeholder="Yorumunuzu yazın..." required></textarea>
-    </div>
-    <button type="submit" class="btn btn-primary">Gönder</button>
-</form>

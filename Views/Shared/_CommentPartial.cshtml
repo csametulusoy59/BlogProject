@@ -1,0 +1,137 @@
+﻿@model BlogProject.Models.Comment
+@using System.Security.Claims 
+@using Microsoft.AspNetCore.Identity
+
+@{
+    // Mevcut kullanıcının ID'sini al (yorum silme/düzenleme yetkisi için kullanılabilir)
+    var currentUserId = User.Identity.IsAuthenticated ? User.FindFirst(ClaimTypes.NameIdentifier)?.Value : null;
+    // Model.UserId int olduğu için string'e dönüştürerek karşılaştırma yapıyoruz
+    var isCommentOwner = currentUserId != null && Model.UserId.ToString() == currentUserId;
+
+
+    // Kullanıcı nesnesinin yüklenip yüklenmediğini kontrol et
+    // Details action'ında .Include(c => c.User) kullandığımız için User navigation property'si dolu olmalı
+    var commentUser = Model.User;
+}
+
+@* Bu partial view, Details.cshtml veya kendisi tarafından çağrılırken bir <li> etiketi içine yerleştirilmelidir. *@
+@* Örneğin: <li> @Html.Partial("_CommentPartial", comment) </li> *@
+
+@* Ana yorum seviyesi - comments.css'teki .comment-main-level sınıfı için *@
+<div class="comment-main-level" data-comment-id="@Model.Id">
+    @* data-comment-id JavaScript için korunur *@
+    @* Avatar kısmı - comments.css'teki .comment-avatar sınıfı için *@
+    <div class="comment-avatar">
+        @* Kullanıcı avatarı buraya gelecek. Eğer kullanıcı modelinizde avatar URL'si varsa kullanın. *@
+        @* Şimdilik sabit bir placeholder görsel kullanıyoruz. *@
+        <img src="https://www.gravatar.com/avatar/?d=mp&s=200" alt="User Avatar"> @* Gravatar placeholder *@
+        @* Veya kendi avatar mantığınızı uygulayın *@
+        @* <img src="@commentUser?.AvatarUrl" alt="@commentUser?.Username Avatar"> *@
+    </div>
+
+    @* Yorum kutusu - comments.css'teki .comment-box sınıfı için *@
+    <div class="comment-box">
+        @* Yorum başlığı (Yazar adı ve zamanı) - comments.css'teki .comment-head sınıfı için *@
+        <div class="comment-head">
+            @* Yorumu yapan kullanıcı adı - Kullanıcı nesnesi varsa göster *@
+            <h6 class="comment-name @(isCommentOwner ? "by-author" : "")">
+                @* Yazar için özel sınıf *@
+                @* Kullanıcı adı linki (isteğe bağlı) *@
+                @* <a href="#">@(commentUser != null ? commentUser.Username : "Bilinmeyen Kullanıcı")</a> *@
+                @(commentUser != null ? commentUser.Username : "Bilinmeyen Kullanıcı")
+            </h6>
+            @* Yorum zamanı *@
+            <span>@Model.Timestamp.ToShortDateString() @Model.Timestamp.ToShortTimeString()</span>
+
+            @* TODO: Yorum beğenme butonu/ikonu buraya eklenebilir (comments.css'teki i elementi gibi) *@
+            @* <i class="fa fa-heart"></i> *@
+
+            @* Cevapla butonu/ikonu - comments.css'teki i elementi gibi *@
+            @if (User.Identity.IsAuthenticated)
+            {
+                @* Cevapla butonu, yorum kutusunun dışında, comment-actions divi içinde olacak.
+                    comments.css'teki i elementi genellikle beğenme veya silme gibi ikonlar için kullanılır.
+                    Cevapla butonu için ayrı bir div veya span kullanmak daha uygun. *@
+                @* <i class="fa fa-reply reply-button" data-comment-id="@Model.Id"></i> *@
+            }
+
+            @* TODO: Yorum sahibi veya Admin için Sil/Düzenle ikonları buraya eklenebilir (comments.css'teki i elementi gibi) *@
+            @*
+            @if (isCommentOwner || User.IsInRole("Admin"))
+            {
+                 <i class="fa fa-trash delete-comment-button" data-comment-id="@Model.Id"></i>
+                 <i class="fa fa-edit edit-comment-button" data-comment-id="@Model.Id"></i>
+            }
+            *@
+        </div>
+        @* Yorum içeriği - comments.css'teki .comment-content sınıfı için *@
+        <div class="comment-content">
+            <p>@Model.Content</p>
+        </div>
+    </div>
+</div>
+
+@* Yorum Aksiyonları (Cevapla Butonu vs.) - comment-main-level dışına veya içine duruma göre yerleştirilebilir *@
+@* comments.css yapısı aksiyon butonlarını doğrudan .comment-head içinde i elementi olarak gösteriyor gibi.
+   Ancak bizim mevcut JS'imiz ve Bootstrap butonlarımız var. Bunları koruyalım ve .comment-box'ın altına ekleyelim. *@
+<div class="comment-actions mt-2 ms-5 ps-3">
+    @* ms/ps ile avatar ve kutu genişliği kadar boşluk bırak *@
+    @* Cevapla butonu (Sadece giriş yapmış kullanıcılar için) *@
+    @if (User.Identity.IsAuthenticated)
+    {
+        <button class="btn btn-sm btn-link reply-button" data-comment-id="@Model.Id">Cevapla</button>
+        @* TODO: Yorum beğenme butonu ekleyebilirsiniz *@
+    }
+
+    @* TODO: Yorum sahibi veya Admin için Sil/Düzenle butonları ekleyebilirsiniz *@
+    @*
+    @if (isCommentOwner || User.IsInRole("Admin"))
+    {
+        <button class="btn btn-sm btn-danger delete-comment-button" data-comment-id="@Model.Id">Sil</button>
+        <button class="btn btn-sm btn-secondary edit-comment-button" data-comment-id="@Model.Id">Düzenle</button>
+    }
+    *@
+</div>
+
+
+@* Cevaplama Formu (Başlangıçta gizli) - comment-main-level dışına veya içine duruma göre yerleştirilebilir *@
+@* comments.css yapısı cevap formları için özel bir stil tanımlamıyor, mevcut Bootstrap formunu koruyalım. *@
+@if (User.Identity.IsAuthenticated)
+{
+    <div class="reply-form mt-3 ms-5 ps-3" style="display: none;" data-blog-id="@Model.BlogId" data-parent-comment-id="@Model.Id">
+        @* ms/ps ile hizala *@
+        <h6>Cevap Yaz</h6>
+        <div class="mb-3">
+            <textarea class="form-control" rows="2" placeholder="Cevabınızı buraya yazın..." required></textarea>
+        </div>
+        @* Form içine Anti-Forgery Token ekle *@
+        @Html.AntiForgeryToken() @* Bu token form için ayrı olmalı *@
+        <button type="submit" class="btn btn-sm btn-primary">Cevap Gönder</button>
+        <button type="button" class="btn btn-sm btn-secondary cancel-reply-button">İptal</button> @* İptal butonu *@
+    </div>
+}
+
+
+@* Cevaplar (Replies) - comments.css'teki .reply-list sınıfı için *@
+@* Bu ul etiketi, bu yoruma verilen cevapları içerecek. *@
+@if (Model.Replies != null && Model.Replies.Any())
+{
+    <ul class="reply-list">
+        @* div yerine ul kullandık, reply-list sınıfını ekledik *@
+        @foreach (var reply in Model.Replies.OrderBy(r => r.Timestamp))
+        {
+            @* Her cevap için bir li etiketi ekledik *@
+            <li>
+                @Html.Partial("_CommentPartial", reply) @* Cevaplar için yine aynı Partial View'ı çağır *@
+            </li>
+        }
+    </ul> @* /div yerine /ul *@
+}
+
+@section Scripts {
+@* Bu scriptler sadece Details View'ında bir kez yüklenmeli, Partial View içinde değil *@
+@* Cevaplama formunu gizle/göster ve iptal etme scriptleri *@
+@* Bu scriptler Details.cshtml'deki ana script bloğuna taşındı. *@
+@* Eğer burada bırakırsanız, her partial render edildiğinde tekrar eklenir ve sorunlara yol açabilir. *@
+@* <script> ... </script> *@
+}

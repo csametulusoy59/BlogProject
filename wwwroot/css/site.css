@@ -20,3 +20,130 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+/* Navbar cam efektli ve uzay temasýna uygun hale getirildi */
+.navbar {
+    background: rgba(0, 0, 50, 0.4) !important;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    transition: background 0.3s ease;
+}
+
+.navbar .nav-link,
+.navbar-brand,
+.navbar-text,
+.navbar-toggler {
+    color: white !important;
+    transition: color 0.3s ease;
+}
+
+.navbar .nav-link:hover {
+    color: #00aaff !important;
+}
+
+/* Responsive mobil menü görünüm düzeltmesi */
+.navbar-collapse {
+    background-color: rgba(0, 0, 30, 0.9);
+}
+
+@media (max-width: 768px) {
+    .navbar-collapse {
+        padding: 1rem;
+    }
+}
+
+/* Logo uyumlu olsun diye ayarlandý */
+.navbar-brand img {
+    height: 40px;
+}
+
+/* Mevcut site.css içeriðiniz */
+
+/* Mevcut site.css içeriðiniz */
+
+/* Afiþ stilleri */
+.afis {
+    position: fixed; /* Ekrana sabitlenir */
+    top: 50%; /* Dikeyde ortalamak için */
+    transform: translateY(-50%); /* Kendi yüksekliðinin yarýsý kadar yukarý kaydýr */
+    width: 200px; /* Afiþ geniþliði artýrýldý (ayarlanabilir) */
+    height: auto; /* Ýçeriðe göre yükseklik */
+    z-index: -1; /* Ýçeriðin altýnda kalýr */
+    display: flex;
+    justify-content: center; /* Ýçeriði yatayda ortala */
+    align-items: center; /* Ýçeriði dikeyde ortala */
+    overflow: hidden; /* Ýçerik taþmasýný engelle */
+    pointer-events: none; /* Afiþlerin týklanabilir elementleri engellemesini önler */
+}
+
+.left-afis {
+    left: 20px; /* Sol kenardan boþluk (ayarlanabilir) */
+}
+
+.right-afis {
+    right: 20px; /* Sað kenardan boþluk (ayarlanabilir) */
+}
+
+/* Afiþ içindeki görsel */
+.afis-gorsel {
+    width: 100%; /* Afiþ div'inin geniþliðini kapla */
+    height: auto; /* Oranýný koru */
+    display: block; /* Ekstra boþluklarý kaldýr */
+}
+
+/* Ana içerik konteynerine yan boþluk ekleyelim ki afiþler ile çakýþmasýn */
+/* Afiþ geniþliði ve kenar boþluðundan biraz daha fazla boþluk býrakmak iyi olur */
+.main-content-container {
+    /* Sol afiþ geniþliði (200px) + sol boþluk (20px) + ek boþluk (30px) = 250px */
+    margin-left: 250px;
+    /* Sað afiþ geniþliði (200px) + sað boþluk (20px) + ek boþluk (30px) = 250px */
+    margin-right: 250px;
+    width: auto; /* Otomatik geniþlik */
+    /* Maksimum geniþlik (ekran geniþliði - toplam afiþ geniþliði - toplam boþluk) */
+    /* 100% - (200px + 20px + 30px) - (200px + 20px + 30px) = 100% - 250px - 250px = 100% - 500px */
+    max-width: calc(100% - 500px);
+}
+
+/* Küçük ekranlarda afiþleri gizleyebiliriz */
+@media (max-width: 1200px) { /* Daha geniþ ekranlarda afiþleri göstermeye baþlayalým */
+    .afis {
+        display: none; /* Belirtilen breakpoint'ten küçük ekranlarda afiþleri gizle */
+    }
+
+    .main-content-container {
+        margin-left: auto; /* Boþluklarý kaldýr */
+        margin-right: auto;
+        max-width: 100%; /* Tam geniþliði kullan */
+    }
+}
+
+
+/* Diðer mevcut stilleriniz */
+
+/* Navbar markasý içindeki SVG'yi dikeyde hizala */
+.navbar-brand svg {
+    vertical-align: middle;
+}
+
+/* Daha Fazla Göster Buton Stili (Eðer kullanýyorsanýz) */
+.load-more-button {
+    background-color: transparent; /* Þeffaf arka plan */
+    color: #5ddcff; /* Vurgu rengi metin */
+    border: 2px solid #5ddcff; /* Vurgu rengi kenarlýk */
+    padding: 10px 20px;
+    font-size: 1em;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+    .load-more-button:hover {
+        background-color: #5ddcff; /* Hover'da arka plan rengi */
+        color: #090a0f; /* Hover'da metin rengi */
+        border-color: #5ddcff; /* Hover'da kenarlýk rengi (ayný kalabilir veya deðiþebilir) */
+    }
+
+    .load-more-button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }

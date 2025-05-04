@@ -1,0 +1,186 @@
+﻿/* Import Google Font - Quicksand */
+@import url("https://fonts.googleapis.com/css2?family=Quicksand:wght@300;500;700&display=swap");
+
+/* Ensure body styles from layout are not overridden in a conflicting way */
+/* The main layout's body will handle the background and flex centering */
+/* If you need specific centering for the login page content,
+   you might wrap the .ring div in another container or adjust body styles
+   in the main layout's CSS if necessary for this specific page. */
+
+/* General styles for the ring container */
+.ring {
+    position: relative;
+    width: 500px; /* Adjust size as needed */
+    height: 500px; /* Adjust size as needed */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* Center the ring in the viewport if body is flex container */
+    margin: auto;
+    /* Add some margin top/bottom if needed, or rely on flex centering */
+    /* margin-top: 50px; */
+    /* margin-bottom: 50px; */
+}
+
+    /* Styles for the rotating rings */
+    .ring i {
+        position: absolute;
+        inset: 0;
+        border: 2px solid #fff; /* Default border color */
+        transition: 0.5s;
+    }
+
+        /* Specific border-radius and animation for each ring */
+        .ring i:nth-child(1) {
+            border-radius: 38% 62% 63% 37% / 41% 44% 56% 59%;
+            animation: animate 6s linear infinite;
+        }
+
+        .ring i:nth-child(2) {
+            border-radius: 41% 44% 56% 59%/38% 62% 63% 37%;
+            animation: animate 4s linear infinite; /* Same animation, different duration */
+        }
+
+        .ring i:nth-child(3) {
+            border-radius: 41% 44% 56% 59%/38% 62% 63% 37%;
+            animation: animate2 10s linear infinite; /* Different animation */
+        }
+
+    /* Hover effect for the rings */
+    .ring:hover i {
+        border: 6px solid var(--clr); /* Use the --clr variable for color */
+        filter: drop-shadow(0 0 20px var(--clr)); /* Add shadow */
+    }
+
+/* Keyframes for ring animations */
+@keyframes animate {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes animate2 {
+    0% {
+        transform: rotate(360deg);
+    }
+
+    100% {
+        transform: rotate(0deg);
+    }
+}
+
+/* Styles for the login form container */
+.login {
+    position: absolute;
+    width: 300px; /* Adjust width as needed */
+    /* height: 100%; /* This might make it too tall, let content define height */ */ display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 20px; /* Space between form elements */
+    padding: 20px; /* Add some padding inside the login box */
+    background: rgba(0, 0, 0, 0.5); /* Semi-transparent dark background */
+    border-radius: 10px; /* Rounded corners */
+    z-index: 1; /* Ensure it's above the rings */
+}
+
+    .login h2 {
+        font-size: 2em;
+        color: #fff; /* White color for heading */
+        margin-bottom: 10px; /* Space below heading */
+    }
+
+    /* Styles for input box container */
+    .login .inputBx {
+        position: relative;
+        width: 100%; /* Full width within the login container */
+    }
+
+        /* Styles for input fields (text, password) */
+        .login .inputBx input {
+            position: relative;
+            width: 100%;
+            padding: 12px 20px;
+            background: transparent; /* Transparent background */
+            border: 2px solid #fff; /* White border */
+            border-radius: 40px; /* Rounded corners */
+            font-size: 1.2em;
+            color: #fff; /* White text color */
+            box-shadow: none;
+            outline: none;
+            transition: border-color 0.3s ease; /* Smooth transition for border */
+        }
+
+            /* Input field focus effect */
+            .login .inputBx input:focus {
+                border-color: var(--clr, #0078ff); /* Highlight color on focus */
+            }
+
+
+            /* Styles for the submit button */
+            .login .inputBx input[type="submit"] {
+                width: 100%;
+                background: #0078ff; /* Default background */
+                background: linear-gradient(45deg, #ff357a, #fff172); /* Gradient background */
+                border: none; /* No border */
+                cursor: pointer; /* Pointer cursor on hover */
+                color: #111; /* Dark text color for button */
+                font-weight: 600; /* Bold text */
+                transition: opacity 0.3s ease; /* Smooth transition for opacity */
+            }
+
+                /* Submit button hover effect */
+                .login .inputBx input[type="submit"]:hover {
+                    opacity: 0.8; /* Reduce opacity on hover */
+                }
+
+            /* Styles for input placeholders */
+            .login .inputBx input::placeholder {
+                color: rgba(255, 255, 255, 0.75); /* Semi-transparent white */
+            }
+
+    /* Styles for the links container (Forget Password, Signup) */
+    .login .links {
+        position: relative;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 20px; /* Padding to match input fields */
+    }
+
+        /* Styles for the links */
+        .login .links a {
+            color: #fff; /* White link color */
+            text-decoration: none; /* Remove underline */
+            font-size: 0.9em; /* Slightly smaller font size */
+            transition: color 0.3s ease; /* Smooth transition for color */
+        }
+
+            /* Link hover effect */
+            .login .links a:hover {
+                color: var(--clr, #0078ff); /* Highlight color on hover */
+            }
+
+/* Adjust validation message styles if needed */
+.validation-summary-errors {
+    color: #ff0057; /* Error color */
+    font-size: 0.9em;
+    margin-top: -10px; /* Reduce space above */
+    margin-bottom: 10px; /* Space below */
+    text-align: center;
+}
+
+    .validation-summary-errors ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .validation-summary-errors li {
+        margin-bottom: 5px;
+    }

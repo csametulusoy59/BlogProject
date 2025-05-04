@@ -1,0 +1,381 @@
+﻿/**
+ * Renk Paleti (Koyu Tema İçin Güncellendi):
+ * Arkaplanlar: Daha koyu veya yarı saydam tonlar
+ * Metinler: Daha açık tonlar
+ * Detaylar/Çizgiler: Açık gri veya yarı saydam beyaz
+ * Vurgu Renkleri: Sitenin mevcut vurgu renkleriyle uyumlu
+ ----------------------------------*/
+* {
+    margin: 0;
+    padding: 0;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+/* Link rengini sitenin genel link rengiyle uyumlu hale getirdik */
+a {
+    color: #5ddcff; /* Sitenin genel link rengi */
+    text-decoration: none;
+    transition: color 0.3s ease; /* Hover efekti için geçiş */
+}
+
+    a:hover {
+        color: #ffffff; /* Hover rengi */
+    }
+
+ul {
+    list-style-type: none;
+}
+
+/* Font Family'yi sitenin genel fontuyla uyumlu hale getirdik */
+body {
+    /* Bu stil genellikle _Layout.cshtml'de veya global site.css'te ayarlanır. */
+    /* Eğer burada tanımlıysa, sitenin genel fontuyla uyumlu hale getirin. */
+    /* font-family: 'Lato', sans-serif; */
+    /* background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%); */
+}
+
+/** ====================
+ * Lista de Comentarios
+ =======================*/
+.comments-container {
+    margin: 60px auto 15px;
+    width: 768px; /* Konteyner genişliği */
+    max-width: 100%; /* Responsive olması için */
+    padding: 0 15px; /* Mobil görünümde kenar boşluğu */
+    /* Arka plan rengini kaldırdık veya yarı saydam yaptık, yıldızlı arka plan görünecek */
+    /* background-color: rgba(255, 255, 255, 0.05); /* Hafif yarı saydam arka plan */ */
+    /* border-radius: 8px; */
+    /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); */
+}
+
+    /* Başlık rengini koyu temaya uygun hale getirdik */
+    .comments-container h1 {
+        font-size: 36px;
+        color: #ffffff; /* Beyaz başlık */
+        font-weight: 400;
+        margin-bottom: 30px; /* Başlık altına boşluk */
+    }
+
+        /* Başlık içindeki link rengini ayarladık */
+        .comments-container h1 a {
+            font-size: 18px;
+            font-weight: 700;
+            color: #5ddcff; /* Sitenin genel link rengi */
+        }
+
+.comments-list {
+    margin-top: 0; /* Üstteki margin'i kaldırdık */
+    position: relative;
+}
+
+    /**
+ * Lineas / Detalles - Renkleri koyu temaya uygun hale getirdik
+ -----------------------*/
+    .comments-list:before {
+        content: '';
+        width: 2px;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.2); /* Yarı saydam beyaz çizgi */
+        position: absolute;
+        left: 32px;
+        top: 0;
+    }
+
+    .comments-list:after {
+        content: '';
+        position: absolute;
+        background: rgba(255, 255, 255, 0.2); /* Yarı saydam beyaz nokta */
+        bottom: 0;
+        left: 27px;
+        width: 7px;
+        height: 7px;
+        border: 3px solid #090A0F; /* Arka plan rengiyle uyumlu kenarlık */
+        -webkit-border-radius: 50%;
+        -moz-border-radius: 50%;
+        border-radius: 50%;
+    }
+
+.reply-list:before, .reply-list:after {
+    display: none;
+}
+
+.reply-list li:before {
+    content: '';
+    width: 60px;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.2); /* Yarı saydam beyaz çizgi */
+    position: absolute;
+    top: 25px;
+    left: -55px;
+}
+
+
+.comments-list li {
+    margin-bottom: 15px;
+    display: block;
+    position: relative;
+}
+
+    .comments-list li:after {
+        content: '';
+        display: block;
+        clear: both;
+        height: 0;
+        width: 0;
+    }
+
+.reply-list {
+    padding-left: 88px;
+    clear: both;
+    margin-top: 15px;
+}
+/**
+ * Avatar
+ ---------------------------*/
+.comments-list .comment-avatar {
+    width: 65px;
+    height: 65px;
+    position: relative;
+    z-index: 99;
+    float: left;
+    border: 3px solid rgba(255, 255, 255, 0.5); /* Yarı saydam beyaz kenarlık */
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    -webkit-box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    -moz-box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    overflow: hidden;
+    background-color: rgba(255, 255, 255, 0.1); /* Avatar arka planı */
+}
+
+    .comments-list .comment-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover; /* Görselin oranını koru */
+    }
+
+.reply-list .comment-avatar {
+    width: 50px;
+    height: 50px;
+}
+
+.comment-main-level:after {
+    content: '';
+    width: 0;
+    height: 0;
+    display: block;
+    clear: both;
+}
+/**
+ * Caja del Comentario - Renkleri koyu temaya uygun hale getirdik
+ ---------------------------*/
+.comments-list .comment-box {
+    width: 680px; /* Genişliği ayarladık */
+    max-width: calc(100% - 80px); /* Avatar genişliğini düşerek responsive yaptık */
+    float: right;
+    position: relative;
+    -webkit-box-shadow: 0 1px 1px rgba(0,0,0,0.15);
+    -moz-box-shadow: 0 1px 1px rgba(0,0,0,0.15);
+    box-shadow: 0 1px 1px rgba(0,0,0,0.15);
+}
+
+    /* Yorum kutusu oku - Renkleri koyu temaya uygun hale getirdik */
+    .comments-list .comment-box:before, .comments-list .comment-box:after {
+        content: '';
+        height: 0;
+        width: 0;
+        position: absolute;
+        display: block;
+        border-width: 10px 12px 10px 0;
+        border-style: solid;
+        border-color: transparent rgba(30, 30, 30, 0.9); /* Kutu arka planıyla uyumlu ok */
+        top: 8px;
+        left: -11px;
+    }
+
+    .comments-list .comment-box:before {
+        border-width: 11px 13px 11px 0;
+        border-color: transparent rgba(0,0,0,0.05);
+        left: -12px;
+    }
+
+.reply-list .comment-box {
+    width: 610px; /* Genişliği ayarladık */
+    max-width: calc(100% - 65px); /* Avatar genişliğini düşerek responsive yaptık */
+}
+
+/* Yorum başlığı (Yazar adı ve zamanı) - Renkleri koyu temaya uygun hale getirdik */
+.comment-box .comment-head {
+    background: rgba(30, 30, 30, 0.9); /* Koyu yarı saydam arka plan */
+    padding: 10px 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Açık gri/yarı saydam çizgi */
+    overflow: hidden;
+    -webkit-border-radius: 4px 4px 0 0;
+    -moz-border-radius: 4px 4px 0 0;
+    border-radius: 4px 4px 0 0;
+    color: #cccccc; /* Varsayılan metin rengi */
+}
+
+    /* İkon rengini koyu temaya uygun hale getirdik */
+    .comment-box .comment-head i {
+        float: right;
+        margin-left: 14px;
+        position: relative;
+        top: 2px;
+        color: #999; /* Açık gri ikon */
+        cursor: pointer;
+        -webkit-transition: color 0.3s ease;
+        -o-transition: color 0.3s ease;
+        transition: color 0.3s ease;
+    }
+
+        /* İkon hover rengini ayarladık */
+        .comment-box .comment-head i:hover {
+            color: #5ddcff; /* Vurgu rengi */
+        }
+
+/* Yorum yazar adı - Renkleri koyu temaya uygun hale getirdik */
+.comment-box .comment-name {
+    color: #ffffff; /* Beyaz yazar adı */
+    font-size: 14px;
+    font-weight: 700;
+    float: left;
+    margin-right: 10px;
+}
+
+    .comment-box .comment-name a {
+        color: #ffffff; /* Beyaz yazar adı linki */
+    }
+
+/* Yorum zamanı */
+.comment-box .comment-head span {
+    float: left;
+    color: #cccccc; /* Açık gri zaman metni */
+    font-size: 13px;
+    position: relative;
+    top: 1px;
+}
+
+/* Yorum içeriği - Renkleri koyu temaya uygun hale getirdik */
+.comment-box .comment-content {
+    background: rgba(40, 48, 53, 0.9); /* Daha koyu yarı saydam arka plan */
+    padding: 12px;
+    font-size: 15px;
+    color: #f0f0f0; /* Açık metin rengi */
+    -webkit-border-radius: 0 0 4px 4px;
+    -moz-border-radius: 0 0 4px 4px;
+    border-radius: 0 0 4px 4px;
+}
+
+/* Yazarın kendi yorumu için özel stil - Renkleri koyu temaya uygun hale getirdik */
+.comment-box .comment-name.by-author, .comment-box .comment-name.by-author a {
+    color: #5ddcff; /* Vurgu rengi */
+}
+
+    .comment-box .comment-name.by-author:after {
+        content: 'yazar'; /* Metni Türkçe yaptık */
+        background: #5ddcff; /* Vurgu rengi */
+        color: #111; /* Koyu metin rengi */
+        font-size: 12px;
+        padding: 3px 5px;
+        font-weight: 700;
+        margin-left: 10px;
+        -webkit-border-radius: 3px;
+        -moz-border-radius: 3px;
+        border-radius: 3px;
+    }
+
+/* Yorum Aksiyonları (Cevapla, Sil, Düzenle) - Bootstrap buton stilleriyle uyumlu olmalı */
+/* comments.css'te bu kısım için özel bir yapı yoktu, mevcut Bootstrap stillerini koruduk */
+/* Ancak boşlukları ve renkleri koyu temaya uygun hale getirebiliriz */
+.comment-actions {
+    /* mt-2 ms-5 ps-3 Bootstrap sınıfları Details.cshtml'de kullanılıyor */
+    /* color: #cccccc; /* Aksiyon metin rengi */ */
+}
+
+    .comment-actions .btn-link {
+        color: #5ddcff; /* Link buton rengi */
+    }
+
+        .comment-actions .btn-link:hover {
+            color: #ffffff; /* Link buton hover rengi */
+        }
+
+
+/* Cevaplama Formu - Bootstrap form stilleriyle uyumlu olmalı */
+/* comments.css'te bu kısım için özel bir yapı yoktu, mevcut Bootstrap stillerini koruduk */
+/* Ancak boşlukları ve renkleri koyu temaya uygun hale getirebiliriz */
+.reply-form {
+    /* mt-3 ms-5 ps-3 Bootstrap sınıfları Details.cshtml'de kullanılıyor */
+    background-color: rgba(40, 48, 53, 0.9); /* Kutu arka planıyla uyumlu */
+    padding: 15px;
+    border-radius: 8px;
+}
+
+    .reply-form h6 {
+        color: #ffffff; /* Başlık rengi */
+    }
+
+    .reply-form textarea.form-control {
+        background-color: rgba(255, 255, 255, 0.1); /* Yarı saydam input arka planı */
+        color: #f0f0f0; /* Input metin rengi */
+        border-color: rgba(255, 255, 255, 0.2); /* Yarı saydam kenarlık */
+    }
+
+        .reply-form textarea.form-control::placeholder {
+            color: rgba(255, 255, 255, 0.5); /* Placeholder rengi */
+        }
+
+    .reply-form .btn {
+        /* Bootstrap buton stilleri kullanılacak */
+    }
+
+
+/** =====================
+ * Responsive
+ ========================*/
+@media only screen and (max-width: 766px) {
+    .comments-container {
+        width: 95%; /* Küçük ekranlarda genişliği ayarla */
+        margin: 30px auto 15px;
+    }
+
+    .comments-list .comment-box {
+        width: calc(100% - 80px); /* Avatar genişliğini düşerek responsive yap */
+    }
+
+    .reply-list .comment-box {
+        width: calc(100% - 65px); /* Avatar genişliğini düşerek responsive yap */
+    }
+
+    /* Küçük ekranlarda aksiyon butonlarını ve formları hizala */
+    .comment-actions.ms-5.ps-3,
+    .reply-form.ms-5.ps-3 {
+        margin-left: 0 !important;
+        padding-left: 0 !important;
+    }
+
+    .replies.ms-4.border-start.ps-3 {
+        margin-left: 0 !important;
+        padding-left: 15px !important; /* Sadece sol padding kalsın */
+        border-left: none !important; /* Kenarlığı kaldır */
+    }
+}
+
+/* Fade-in animasyonu için gerekli CSS (Index.cshtml'deki JS ile birlikte kullanılır) */
+/* Bu stiller genellikle site.css veya ayrı bir animasyon CSS dosyasında olmalı */
+/* Eğer burada tanımlıysa, Index sayfası için geçerli olacaktır. */
+/*
+.hidden {
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+*/

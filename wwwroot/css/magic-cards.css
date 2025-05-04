@@ -1,0 +1,159 @@
+﻿/* Magic Card Stilleri - Yatay İçerik Düzeni */
+
+/* Genel kart konteyneri stilleri (Index.cshtml'deki .blog-magic-card-item veya .magic-card-container) */
+/* Bu kısım kartın dış boşluğunu ve animasyonunu kontrol eder */
+.blog-magic-card-item {
+    /* mb-4 Bootstrap sınıfı alt boşluk sağlar */
+    /* hidden ve visible sınıfları fade-in animasyonu için kullanılır */
+    opacity: 0; /* Başlangıçta gizli */
+    transform: translateY(20px); /* Başlangıçta biraz aşağıda */
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out; /* Geçiş efekti */
+    width: 100%; /* Konteynerin tam genişliğini kullan */
+    max-width: 700px; /* Kartlar için maksimum genişlik (ayarlanabilir) */
+    margin-left: auto; /* Ortalamak için */
+    margin-right: auto; /* Ortalamak için */
+}
+
+    .blog-magic-card-item.visible {
+        opacity: 1; /* Görünür olduğunda tam opaklık */
+        transform: translateY(0); /* Orijinal pozisyonuna gel */
+    }
+
+
+/* Magic Card'ın kendisi */
+.magic-card-container {
+    perspective: 1000px; /* 3D dönüşüm için perspektif */
+    width: 100%; /* Konteynerin tam genişliğini kullan */
+    height: auto; /* İçeriğe göre yükseklik ayarı */
+    /* max-width: 600px; /* Kartın maksimum genişliği (isteğe bağlı, .blog-magic-card-item ile birlikte düşünülmeli) */ */ margin: 0 auto; /* Ortalamak için */
+}
+
+.magic-card {
+    position: relative;
+    width: 100%; /* Konteynerinin tam genişliğini kullan */
+    height: auto; /* İçeriğe göre yükseklik */
+    transform-style: preserve-3d; /* 3D dönüşümleri etkinleştir */
+    transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1); /* Dönüşüm animasyonu */
+    border-radius: 10px; /* Yuvarlak köşeler */
+    overflow: hidden; /* İçerik taşmasını engelle */
+    background: rgba(255, 255, 255, 0.1); /* Yarı saydam beyaz arka plan */
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3); /* Gölge */
+    display: flex; /* İçeriği yatay sıralamak için flexbox kullan */
+    flex-direction: row; /* İçeriği yatay sırala */
+    color: #f0f0f0; /* Varsayılan metin rengi */
+    text-decoration: none; /* Link alt çizgisini kaldır */
+}
+
+    /* Kart üzerine gelindiğinde 3D dönüşüm */
+    .magic-card:hover {
+        transform: rotateY(10deg) rotateX(5deg) translateZ(10px); /* Hafif 3D dönüşüm */
+        /* İsterseniz flip animasyonunu buradan kaldırabilirsiniz */
+    }
+
+/* Kartın ön yüzü (varsayılan görünüm) */
+/* .card-front ve .card-back sınıflarını Magic Card flip efekti için kullanıyorsanız */
+/* Yatay düzende bu yapıyı nasıl kullanacağınız Magic Card implementasyonunuza bağlıdır. */
+/* Eğer basit bir hover efekti istiyorsanız, .magic-card içindeki flexbox yeterlidir. */
+
+/* Kart içeriği (başlık, özet) */
+.card-content {
+    padding: 20px; /* İçeriğe boşluk */
+    flex-grow: 1; /* Kalan alanı kapla */
+    display: flex;
+    flex-direction: column; /* İçindeki öğeleri dikey sırala */
+    justify-content: space-between; /* İçeriği dikeyde yay */
+}
+
+    .card-content h5 {
+        margin-top: 0;
+        margin-bottom: 10px;
+        font-size: 1.5em; /* Başlık boyutu */
+        color: #5ddcff; /* Başlık rengi (açık mavi) */
+    }
+
+    .card-content p {
+        margin-bottom: 15px;
+        color: #cccccc; /* Paragraf rengi (açık gri) */
+        line-height: 1.5;
+        /* Metin özetini sınırlamak isterseniz */
+        /* display: -webkit-box;
+    -webkit-line-clamp: 4; /* Kaç satır gösterileceği (yatay kart için biraz daha fazla olabilir) */
+        /* -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis; */
+    }
+
+/* Kart istatistikleri (beğeni, yorum) */
+.card-stats {
+    padding: 20px; /* İstatistiklere boşluk */
+    flex-shrink: 0; /* Küçülmesini engelle */
+    display: flex;
+    flex-direction: column; /* İstatistikleri dikey sırala */
+    justify-content: center; /* Dikeyde ortala */
+    align-items: center; /* Yatayda ortala */
+    background: rgba(0, 0, 0, 0.2); /* İstatistik alanı için hafif koyu arka plan */
+    border-left: 1px solid rgba(255, 255, 255, 0.1); /* Ayırıcı çizgi */
+    min-width: 100px; /* Minimum genişlik (ayarlanabilir) */
+    color: #f0f0f0; /* İstatistik metin rengi */
+}
+
+    /* Beğeni butonu için imleç stilini ayarla */
+    .card-stats .like-button {
+        cursor: pointer; /* İmleci el simgesine çevir */
+        transition: color 0.3s ease; /* Renk değişimi için geçiş */
+    }
+
+        /* Beğeni butonu üzerine gelindiğinde renk değişimi (isteğe bağlı) */
+        .card-stats .like-button:hover {
+            color: #ff0057; /* Hover rengi (kırmızımsı) */
+        }
+
+
+    .card-stats div {
+        margin-bottom: 10px; /* İstatistik öğeleri arasına boşluk */
+        font-size: 1.1em;
+        display: flex; /* İkon ve sayıyı yan yana getirmek için */
+        align-items: center;
+        gap: 5px; /* İkon ve sayı arasına boşluk */
+    }
+
+        .card-stats div:last-child {
+            margin-bottom: 0; /* Son öğenin altında boşluk olmasın */
+        }
+
+    .card-stats i {
+        color: #fffd44; /* İkon rengi (sarımsı) */
+    }
+
+
+/* Responsive ayarlar */
+@media (max-width: 768px) {
+    .magic-card {
+        flex-direction: column; /* Küçük ekranlarda dikey düzene geç */
+    }
+
+    .card-stats {
+        flex-direction: row; /* İstatistikleri küçük ekranda yatay sırala */
+        justify-content: space-around; /* Yatayda yay */
+        width: 100%; /* Tam genişliği kapla */
+        min-width: auto; /* Minimum genişliği kaldır */
+        border-left: none; /* Sol kenarlığı kaldır */
+        border-top: 1px solid rgba(255, 255, 255, 0.1); /* Üst kenarlık ekle */
+        padding: 15px 20px; /* Padding ayarı */
+    }
+
+        .card-stats div {
+            margin-bottom: 0; /* Yatay düzende alt boşluğu kaldır */
+        }
+}
+
+/* Fade-in animasyonu için gerekli CSS (Index.cshtml'deki JS ile birlikte kullanılır) */
+.hidden {
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+.visible {
+    opacity: 1;
+    transform: translateY(0);
+}

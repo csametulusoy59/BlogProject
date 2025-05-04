@@ -1,31 +1,177 @@
-﻿@model List<BlogProject.Models.BlogPost>
+﻿@model IEnumerable<BlogProject.Models.BlogPost>
 
 @{
-    ViewData["Title"] = "Blog Yazıları";
+    ViewData["Title"] = "Ana Sayfa";
+    // Layout olarak _Layout.cshtml kullanılacak (yıldız arkaplanı buradan gelir)
+    Layout = "_Layout";
 }
 
-<h1>Blog Yazıları</h1>
+@* Magic Card CSS dosyasını linkleyin *@
+<link rel="stylesheet" href="~/css/magic-cards.css" asp-append-version="true" />
 
-<a class="btn btn-primary mb-3" href="/Blog/Create">Yeni Yazı Ekle</a>
+@* Font Awesome ikonları için CDN (Eğer Layout'ta yoksa buraya ekleyin) *@
+@* Layout dosyanızda zaten varsa bu satırı kaldırabilirsiniz *@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Başlık</th>
-            <th>İçerik</th>
-            <th>Oluşturulma Tarihi</th>
-            <th>Beğeni</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var post in Model)
-        {
-            <tr>
-                <td>@post.Title</td>
-                <td>@(post.Content.Length > 100 ? post.Content.Substring(0, 100) + "..." : post.Content)</td>
-                <td>@post.CreatedAt.ToShortDateString()</td>
-                <td>@post.Likes</td>
-            </tr>
-        }
-    </tbody>
-</table>
+
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Son Yazılar</h2>
+
+    @if (Model != null && Model.Any())
+    {
+        @* Blog yazılarını saran ana konteyner *@
+        <div class="blog-list-container">
+            @* Bu sınıfı genel düzenleme için kullanabiliriz *@
+            @foreach (var blogPost in Model) // Modelinizdeki blog yazılarına göre döngüyü ayarlayın
+            {
+                @* Her bir blog yazısı için bir konteyner ve animasyon sınıfı *@
+                @* mb-4 Bootstrap sınıfı kartlar arasına alt boşluk ekler *@
+                @* hidden sınıfı fade-in animasyonu için *@
+                <div class="mb-4 blog-magic-card-item hidden">
+                    @* Magic Card Container *@
+                    <div class="magic-card-container">
+                        @* Magic Card Elementi - Detay sayfasına link olarak sarıyoruz *@
+                        @* Kartın tamamı tıklanabilir olacak şekilde a tag'ini magic-card'a verdik *@
+                        <a asp-controller="Blog" asp-action="Details" asp-route-id="@blogPost.Id" class="magic-card text-decoration-none">
+                            @* Kartın Görünen İçeriği *@
+                            <div class="card-content">
+                                @* Blog başlığı *@
+                                <h5>@blogPost.Title</h5>
+                                @* Yayın Tarihi *@
+                                @if (blogPost.CreatedAt != default(DateTime)) // DateTime için varsayılan değer kontrolü
+                                {
+                                    <p class="text-muted"><i class="far fa-calendar-alt"></i> @blogPost.CreatedAt.ToShortDateString() @blogPost.CreatedAt.ToShortTimeString()</p> @* Font Awesome takvim ikonu *@
+                                }
+                                @* İçerik özeti *@
+                                @if (!string.IsNullOrEmpty(blogPost.Content))
+                                {
+                                    @* İçeriğin ilk 150 karakterini alıyoruz, daha uzunsa sonuna "..." ekliyoruz *@
+                                    <p>@(blogPost.Content.Length > 150 ? blogPost.Content.Substring(0, 150) + "..." : blogPost.Content)</p>
+                                }
+                            </div>
+
+                            @* Hover Durumunda Görünen İstatistikler *@
+                            @* İstatistik divini de link içine aldık, ancak içindeki beğeni simgesini ayrıca tıklanabilir yapacağız *@
+                            <div class="card-stats">
+                                @* Beğeni Sayısı - Tıklanabilir hale getiriyoruz *@
+                                @* data-id özniteliği ile blog yazısının ID'sini saklıyoruz *@
+                                @* data-liked özniteliği ile kullanıcının bu yazıyı beğenip beğenmediğini saklıyoruz (Initial state from server) *@
+                                @{
+                                    // Mevcut kullanıcının kimliği doğrulanmışsa
+                                    bool isUserAuthenticated = User.Identity.IsAuthenticated;
+                                    int currentUserIdInt = 0;
+                                    bool isCurrentUserIdIntParsed = false;
+
+                                    if (isUserAuthenticated)
+                                    {
+                                        // Kullanıcının ID'sini string olarak al
+                                        var currentUserIdString = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+                                        // String ID'yi integer'a dönüştürmeye çalış
+                                        isCurrentUserIdIntParsed = int.TryParse(currentUserIdString, out currentUserIdInt);
+                                    }
+
+                                    // Kullanıcının bu yazıyı beğenip beğenmediğini kontrol et
+                                    // Kullanıcı kimliği doğrulanmışsa VE ID'si integer'a dönüştürülebilmişse VE blogPost.Likes null değilse
+                                    // VE Likes koleksiyonunda UserId'si mevcut kullanıcının integer ID'sine eşit olan bir öğe varsa
+                                    bool hasLiked = isUserAuthenticated && isCurrentUserIdIntParsed && blogPost.Likes != null && blogPost.Likes.Any(l => l.UserId == currentUserIdInt);
+                                }
+                                <span class="like-button" data-id="@blogPost.Id" data-liked="@hasLiked.ToString().ToLower()">
+                                    @* data-liked boolean değerini string "true" veya "false" olarak sakla *@
+                                    @* İkonun başlangıç durumu (dolu veya boş) kullanıcının beğenip beğenmediğine göre ayarlanmalı *@
+                                    <i class="@(hasLiked ? "fas" : "far") fa-heart" style="color: @(hasLiked ? "red" : "#fffd44");"></i> @* Font Awesome kalp ikonu *@
+                                    <span class="like-count">@(blogPost.Likes?.Count ?? 0)</span> @* Beğeni sayısını gösteren span *@
+                                </span>
+                                @* Yorum Sayısı - Zaten kartın tamamı link olduğu için yorum simgesine tıklamak detay sayfasına gidecektir *@
+                                @* Eğer yorum simgesine tıklayınca sadece yorumlar kısmına scroll yapmak isterseniz, linke #comments gibi bir fragment ekleyebilirsiniz *@
+                                <div>
+                                    <i class="far fa-comment"></i> @(blogPost.Comments?.Count ?? 0)
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        @* Blog yazısı yoksa gösterilecek mesaj *@
+        <div class="alert alert-info text-center" role="alert">
+            Henüz hiç blog yazısı eklenmemiş.
+        </div>
+    }
+</div>
+
+@section Scripts {
+@* jQuery kütüphanesini ekleyin (Eğer Layout'ta yoksa) *@
+@* AJAX çağrıları için jQuery kullanacağız *@
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+
+@* Fade-in animasyonu için JavaScript *@
+    <script>
+        $(document).ready(function () {
+            // Her kart konteynerini sırayla görünür yap
+            $('.blog-magic-card-item').each(function (index) {
+                var item = $(this);
+                setTimeout(function () {
+                    item.removeClass('hidden').addClass('visible');
+                }, 150 * index); // Her kart için 150ms gecikme
+            });
+
+            // Beğeni butonuna tıklama olayı ekle
+            $('.like-button').on('click', function (e) {
+                e.preventDefault(); // Linkin varsayılan davranışını (detay sayfasına gitme) engelle
+                e.stopPropagation(); // Olayın üst elementlere (kart linkine) yayılmasını engelle
+
+                var button = $(this);
+                var blogPostId = button.data('id'); // data-id özniteliğinden blog post ID'sini al
+                var likeCountSpan = button.find('.like-count'); // Beğeni sayısını gösteren span'i bul
+                var likeIcon = button.find('i'); // Kalp ikonunu bul
+
+                // AJAX isteği ile beğeni işlemini yapacak sunucu endpoint'ine gönder
+                $.ajax({
+                    url: '/Blog/ToggleLike', // Beğeni/Beğenmeme işlemini yapacak Action'ın URL'si (Bu Action'ı sizin oluşturmanız gerekecek)
+                    type: 'POST',
+                    data: { blogPostId: blogPostId }, // Gönderilecek veri (blog post ID'si)
+                    success: function (response) {
+                        // Sunucudan başarılı yanıt gelirse
+                        if (response.success) {
+                            // Yeni beğeni sayısını güncelle
+                            likeCountSpan.text(response.newLikeCount);
+
+                            // İkon rengini veya stilini beğeni durumuna göre değiştirin
+                            if (response.liked) { // Sunucudan dönen 'liked' bilgisi true ise (beğenildi)
+                                likeIcon.removeClass('far').addClass('fas').css('color', 'red'); // Kırmızı ve dolu ikon
+                                button.data('liked', true); // data-liked özniteliğini güncelle
+                            } else { // Sunucudan dönen 'liked' bilgisi false ise (beğeni geri alındı)
+                                likeIcon.removeClass('fas').addClass('far').css('color', '#fffd44'); // Varsayılan renk ve boş ikon
+                                button.data('liked', false); // data-liked özniteliğini güncelle
+                            }
+                        } else {
+                            // Beğeni işlemi başarısız olursa (örn: sunucu tarafında bir hata oluşursa)
+                            // Sunucudan dönen response.message'ı kontrol edin
+                            if (response.message) {
+                                alert(response.message); // Sunucudan gelen özel hata mesajını göster
+                            } else {
+                                alert('Beğeni işlemi başarısız oldu.'); // Genel hata mesajı
+                            }
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        // AJAX isteği sırasında hata olursa
+                        console.error("Beğeni AJAX hatası:", error);
+                        // Hata durumunda spesifik mesajlar gösterebilirsiniz (örn: xhr.status'a göre)
+                        if (xhr.status === 401) { // Yetkisiz (Unauthorized) hatası
+                             alert('Beğenmek için lütfen giriş yapın.');
+                             // İsteğe bağlı olarak kullanıcıyı giriş sayfasına yönlendirebilirsiniz
+                             // window.location.href = '/Account/Login'; // Giriş sayfasına yönlendirme
+                        } else {
+                           alert('Bir hata oluştu, lütfen tekrar deneyin.');
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+}

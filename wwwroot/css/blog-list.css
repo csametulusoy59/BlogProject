@@ -1,0 +1,116 @@
+﻿/* Blog Listesi İçin Yatay Kart Stilleri */
+
+/* Genel konteyner stilleri (Index.cshtml'deki div veya element) */
+.blog-list-container {
+    display: flex;
+    flex-direction: column; /* Kartları dikey olarak sırala */
+    gap: 20px; /* Kartlar arasına boşluk ekle */
+    padding: 20px; /* Konteynerin içine boşluk */
+    max-width: 900px; /* Maksimum genişlik belirle */
+    margin: 20px auto; /* Ortala ve üst/alt boşluk ver */
+    width: 100%; /* Ekran genişliğini kullan */
+    box-sizing: border-box; /* Padding'i genişliğe dahil et */
+}
+
+/* Her bir blog yazısı kartı */
+.blog-list-item {
+    display: flex; /* İçindeki öğeleri (resim ve içerik) yatay sırala */
+    flex-direction: row; /* Yatay düzen */
+    background-color: #fff; /* Beyaz arka plan */
+    color: #333; /* Koyu metin rengi */
+    border-radius: 8px; /* Hafif yuvarlak köşeler */
+    overflow: hidden; /* İçerik taşmasını engelle */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Gölge efekti */
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Hover efekti için geçiş */
+    width: 100%; /* Konteynerin tam genişliğini kullan */
+}
+
+    /* Kart üzerine gelindiğinde */
+    .blog-list-item:hover {
+        transform: translateY(-5px); /* Hafifçe yukarı kaydır */
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); /* Gölgeyi belirginleştir */
+    }
+
+/* Blog görseli veya thumbnail alanı */
+.blog-list-item-img {
+    width: 200px; /* Görsel için sabit genişlik (ayarlanabilir) */
+    flex-shrink: 0; /* Görselin küçülmesini engelle */
+    overflow: hidden; /* Görselin taşmasını engelle */
+}
+
+    .blog-list-item-img img {
+        display: block;
+        width: 100%; /* Konteynerinin genişliğini al */
+        height: 100%; /* Konteynerinin yüksekliğini al */
+        object-fit: cover; /* Oranını koruyarak alanı kapla */
+    }
+
+/* Blog içeriği alanı (başlık, özet, metadata, oku butonu) */
+.blog-list-item-content {
+    padding: 20px; /* İçeriğe boşluk */
+    flex-grow: 1; /* Kalan alanı kapla */
+    display: flex;
+    flex-direction: column; /* İçindeki öğeleri dikey sırala */
+    justify-content: space-between; /* İçeriği dikeyde yay */
+}
+
+    .blog-list-item-content h3 {
+        margin-top: 0;
+        margin-bottom: 10px;
+        font-size: 1.8em; /* Başlık boyutu */
+        color: #03658c; /* Başlık rengi */
+    }
+
+    .blog-list-item-content p {
+        margin-bottom: 15px;
+        color: #555; /* Paragraf rengi */
+        line-height: 1.5;
+        /* Metin özetini sınırlamak isterseniz */
+        /* display: -webkit-box;
+    -webkit-line-clamp: 3; /* Kaç satır gösterileceği */
+        /* -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis; */
+    }
+
+    .blog-list-item-content .metadata {
+        font-size: 0.9em;
+        color: #777; /* Metadata rengi */
+        margin-bottom: 10px;
+    }
+
+        .blog-list-item-content .metadata span {
+            margin-right: 15px;
+        }
+
+    /* Devamını Oku butonu/linki */
+    .blog-list-item-content a {
+        display: inline-block; /* Buton gibi davranması için */
+        background-color: #03658c; /* Buton arka plan rengi */
+        color: #fff; /* Buton metin rengi */
+        padding: 10px 15px;
+        border-radius: 5px;
+        text-decoration: none; /* Alt çizgiyi kaldır */
+        align-self: flex-start; /* Sola hizala */
+        transition: background-color 0.3s ease;
+    }
+
+        .blog-list-item-content a:hover {
+            background-color: #024b6a; /* Hover rengi */
+        }
+
+/* Mobil cihazlar için responsive ayarlar */
+@media (max-width: 768px) {
+    .blog-list-item {
+        flex-direction: column; /* Küçük ekranlarda dikey düzene geç */
+    }
+
+    .blog-list-item-img {
+        width: 100%; /* Görsel tam genişliği kapla */
+        height: 180px; /* Görsel için sabit yükseklik (ayarlanabilir) */
+    }
+
+    .blog-list-item-content {
+        padding: 15px; /* Mobil için padding'i azalt */
+    }
+}

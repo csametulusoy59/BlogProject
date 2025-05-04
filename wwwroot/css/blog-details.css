@@ -1,0 +1,182 @@
+﻿/* Sağladığınız Movie Card CSS kodları - Blog Detayları İçin Uyarlanmış */
+*, *:before, *:after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --brand-color: #03658c; /* Yorumlardaki mavi tonuyla uyumlu */
+    --dark-color: #1e1b26;
+    --accent-color: #e7e7e7;
+    --text-light: #b4b4b4;
+    --text-lighter: #d7d7d7;
+    --section-space: 16px;
+    --card-padding: 24px;
+    --poster-overlay: rgba(30, 27, 38, 0.8);
+}
+
+/* Body stili Layout'ta veya global CSS'te olmalı */
+/* body {
+  background: linear-gradient(
+    rgba(30, 27, 38, 0.95),
+    rgba(30, 27, 38, 0.95)
+  ), url("https://assets.codepen.io/406785/pulp2.jpg");
+  background-position: center;
+  background-size: cover;
+  background-repeat: repeat;
+  font-family: 'Open Sans', sans-serif;
+  color: var(--accent-color);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+} */
+
+a {
+    text-decoration: none;
+    color: var(--accent-color);
+}
+
+.blog-post-card {
+    width: 100%;
+    /* max-width: 768px; /* Yorum konteyneri ile aynı genişlikte */ */ background-color: #fff; /* Yorum kutuları gibi beyaz arka plan */
+    color: #595959; /* Yorum içeriği rengiyle uyumlu */
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15); /* Hafif gölge */
+    position: relative;
+    margin: 30px auto; /* Ortalamak ve üst/alt boşluk vermek için */
+    display: block; /* Görsel kaldırıldığı için flex kaldırıldı */
+}
+
+/* Görselle ilgili stiller kaldırıldı veya güncellendi */
+/* .blog-post-img-container { ... } */
+/* .blog-post-img { ... } */
+/* .blog-post-overlay { ... } */
+
+.blog-post-content {
+    padding: var(--card-padding);
+    position: relative;
+    /* margin-top: -80px; /* Görsel bindirmesi kaldırıldı */ */ z-index: 2;
+    width: 100%; /* Tam genişlik */
+}
+
+/* Görsel kaldırıldığı için responsive flex ayarları kaldırıldı */
+@media (min-width: 768px) {
+    .blog-post-card {
+        display: block; /* Flex kaldırıldı */
+    }
+
+    /* Görselle ilgili responsive stiller kaldırıldı */
+    /* .blog-post-img-container { ... } */
+    /* .blog-post-content { ... } */
+    /* .blog-post-overlay { ... } */
+}
+
+
+.title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 6px;
+}
+
+.blog-post-title {
+    font-family: 'Roboto', Arial, Helvetica, Sans-serif, Verdana; /* Yorum fontuyla uyumlu */
+    font-size: 28px; /* Başlık boyutu */
+    font-weight: 700;
+    color: #283035; /* Yorum başlık rengiyle uyumlu */
+    flex: 1;
+    line-height: 1.2;
+    margin-bottom: 0.5rem;
+}
+
+.publish-date {
+    font-size: 13px;
+    color: #999; /* Yorum zamanı rengiyle uyumlu */
+    margin-left: 8px;
+    opacity: 0.9;
+    margin-top: 5px;
+}
+
+.metadata {
+    display: flex;
+    align-items: center;
+    margin: 8px 0 var(--section-space);
+    color: #595959; /* Yorum içeriği rengiyle uyumlu */
+    font-size: 14px;
+}
+
+/* Süre, türler, rating gibi blog post'a uymayan kısımları kaldırıldı */
+/* .duration { ... } */
+/* .genres { ... } */
+/* .ratings-row { ... } */
+
+.ratings-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    /* İçerik ve beğeni arasına boşluk ekledik */
+    margin-top: var(--section-space); /* Üstten boşluk */
+    margin-bottom: var(--section-space);
+    padding-bottom: var(--section-space);
+    border-bottom: 1px solid #E5E5E5; /* Yorum başlık altı çizgisiyle uyumlu */
+}
+
+.likes {
+    display: flex;
+    align-items: center;
+    background-color: rgba(3, 101, 140, 0.1); /* Yorum mavi tonuyla uyumlu arka plan */
+    border: 1px solid rgba(3, 101, 140, 0.3); /* Kenarlık */
+    padding: 3px 8px; /* Padding'i azaltarak boyutu küçülttük */
+    border-radius: 20px;
+    transition: background-color 0.2s ease;
+    cursor: pointer; /* Tıklanabilir olduğunu belirtmek için */
+    font-size: 0.9em; /* Metin boyutunu küçülttük */
+}
+
+    .likes:hover {
+        background-color: rgba(3, 101, 140, 0.2);
+    }
+
+
+.heart-icon {
+    width: 14px; /* İkon boyutunu küçülttük */
+    height: 14px; /* İkon boyutunu küçülttük */
+    margin-right: 4px; /* Sağdan boşluğu azalttık */
+    fill: var(--brand-color); /* Mavi tonu */
+}
+
+.likes-count {
+    font-size: 0.9em; /* Metin boyutunu küçülttük */
+    font-weight: 600;
+    color: var(--brand-color); /* Mavi tonu */
+}
+
+.description-section {
+    margin-bottom: var(--section-space);
+    padding-bottom: var(--section-space);
+    border-bottom: 1px solid #E5E5E5; /* Yorum başlık altı çizgisiyle uyumlu */
+}
+
+.section-title {
+    font-family: 'Roboto', Arial, Helvetica, Sans-serif, Verdana;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    margin-bottom: 10px;
+    color: #283035; /* Yorum başlık rengiyle uyumlu */
+}
+
+.blog-post-description {
+    font-size: 15px; /* Yorum içeriği font boyutuyla uyumlu */
+    line-height: 1.6;
+    color: #595959; /* Yorum içeriği rengiyle uyumlu */
+    text-align: justify;
+}
+
+/* Cast ve Action butonları blog post'a uymadığı için kaldırıldı */
+/* .cast-section { ... } */
+/* .action-row { ... } */

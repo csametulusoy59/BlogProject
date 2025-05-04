@@ -1,29 +1,72 @@
-﻿@model BlogProject.Models.User
+﻿@model BlogProject.Models.ViewModels.LoginViewModel
 
-@{
-    ViewData["Title"] = "Kayıt Ol";
-}
 
-<h2>@ViewData["Title"]</h2>
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Kayıt Ol</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/register-ring.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+<body>
+    <div class="ring" style="--clr:#00bcd4;">
+        <i></i>
+        <i></i>
+        <i></i>
 
-<form asp-action="Register" method="post">
-    <div class="form-group">
-        <label>Kullanıcı Adı</label>
-        <input asp-for="Username" class="form-control" />
-        <span asp-validation-for="Username" class="text-danger"></span>
+        <form class="login" method="post" action="/Account/Register">
+            <h2>Kayıt Ol</h2>
+
+            <div class="inputBx">
+                <input type="text" name="username" placeholder="Kullanıcı Adı" required />
+            </div>
+
+            <div class="inputBx">
+                <input type="email" name="email" placeholder="E-posta" required />
+            </div>
+
+            <div class="inputBx">
+                <input type="password" name="password" placeholder="Şifre" id="password" required />
+                <span class="toggle-password" onclick="togglePassword()">
+                    <i class="fas fa-eye" id="toggleIcon"></i>
+                </span>
+            </div>
+
+            <div class="inputBx">
+                <input type="password" name="confirmPassword" placeholder="Şifre Tekrar" required />
+            </div>
+
+            <div class="inputBx">
+                <input type="submit" value="Kayıt Ol" />
+            </div>
+
+            <div class="social-login">
+                <button class="google"><i class="fab fa-google"></i> Google ile Kayıt Ol</button>
+                <button class="facebook"><i class="fab fa-facebook-f"></i> Facebook ile Kayıt Ol</button>
+            </div>
+
+            <div class="links">
+                <a href="/Account/Login">Zaten hesabın var mı?</a>
+            </div>
+        </form>
     </div>
 
-    <div class="form-group">
-        <label>Şifre</label>
-        <input asp-for="Password" type="password" class="form-control" />
-        <span asp-validation-for="Password" class="text-danger"></span>
-    </div>
-
-    <button type="submit" class="btn btn-primary mt-2">Kayıt Ol</button>
-</form>
-
-@section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
-}
+    <script>
+        function togglePassword() {
+            const passwordInput = document.getElementById("password");
+            const icon = document.getElementById("toggleIcon");
+            if (passwordInput.type === "password") {
+                passwordInput.type = "text";
+                icon.classList.remove("fa-eye");
+                icon.classList.add("fa-eye-slash");
+            } else {
+                passwordInput.type = "password";
+                icon.classList.remove("fa-eye-slash");
+                icon.classList.add("fa-eye");
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,117 @@
+﻿/* Pure CSS Gradient Background Animation */
+
+/* Body styles for the gradient background */
+body {
+    background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+    background-size: 400% 400%;
+    animation: gradient 15s ease infinite;
+    min-height: 100vh; /* Ensure body takes at least full viewport height */
+    margin: 0; /* Remove default body margin */
+    padding: 0; /* Remove default body padding */
+    display: flex; /* Use flexbox for layout */
+    flex-direction: column; /* Stack children vertically */
+    position: relative; /* Needed for z-index */
+    color: #f0f0f0; /* Default text color for body content */
+}
+
+/* Keyframes for the gradient animation */
+@keyframes gradient {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+/* Ensure html also takes full height */
+html {
+    height: 100%;
+}
+
+/* Header (Navbar) positioning */
+header {
+    position: relative;
+    z-index: 10; /* Keep navbar on top */
+}
+
+/* Main content area */
+main {
+    flex-grow: 1; /* Allow main content to take up available space */
+    position: relative;
+    z-index: 1; /* Ensure content is above background */
+    /* Add padding at the bottom equal to the footer's height to prevent overlap */
+    /* Adjust this value based on your footer's actual height */
+    padding-bottom: 80px; /* Example: adjust as needed */
+}
+
+/* Footer positioning */
+footer {
+    position: fixed; /* Fix footer to the viewport */
+    bottom: 0; /* Align to the bottom */
+    left: 0; /* Align to the left */
+    width: 100%; /* Full width */
+    z-index: 100; /* Ensure footer is on top of everything */
+    background-color: rgba(30, 27, 38, 0.9); /* Semi-transparent dark background for footer */
+    padding: 1rem 0; /* Padding inside footer */
+    text-align: center; /* Center footer text */
+    color: #dddddd; /* Footer text color */
+}
+
+    /* Styles for elements within the footer */
+    footer a {
+        color: #dddddd !important; /* Footer link color */
+        text-decoration: none; /* Remove underline from footer links */
+    }
+
+/* Container for content (within main) */
+.container {
+    position: relative;
+    z-index: 1; /* Ensure container content is above background */
+    background-color: transparent; /* Make container background transparent */
+}
+
+/* Adjust text colors for better visibility on the gradient background */
+/* These are general styles, specific elements might need overrides */
+h1, h2, h3, h4, h5, h6 {
+    color: #ffffff; /* White headings */
+}
+
+p, span, div {
+    color: #cccccc; /* Light gray text */
+}
+
+a {
+    color: #5ddcff; /* Accent color for links */
+}
+
+/* Specific adjustments for Navbar text colors */
+header .navbar .nav-link,
+header .navbar .navbar-brand,
+header .navbar .navbar-text {
+    color: #ffffff !important; /* White navbar text */
+}
+
+    header .navbar .nav-link:hover {
+        color: #5ddcff !important; /* Accent color on hover */
+    }
+
+/* Specific adjustments for footer text colors (already done in footer style) */
+/* footer .container,
+footer .container a { ... } */
+
+/* Ensure Bootstrap's bg-white/bg-light classes are overridden if used in Navbar/Footer */
+/* Example: */
+/* .navbar.bg-white { background-color: transparent !important; } */
+/* .footer.bg-light { background-color: transparent !important; } */
+
+
+/* Remove old wave background styles */
+/* .waveWrapper, .waveWrapperInner, .bgTop, .bgMiddle, .bgBottom, .wave, .waveTop, .waveMiddle, .waveBottom { display: none; } */
+/* @keyframes move_wave { ... } */
+
